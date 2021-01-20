@@ -31,6 +31,87 @@ module BraintreeSampleApp
           }
         }
 
+        send_request(query, variables)
+      end
+
+      def charge_payment_method(payment_method_id, amount)
+        query = <<-GRAPHQL
+          mutation ChargePaymentMethod($input: ChargePaymentMethodInput!) {
+            chargePaymentMethod(input: $input) {
+              transaction {
+                id
+                status
+              }
+            }
+          }
+        GRAPHQL
+
+        variables = {
+          input: {
+            paymentMethodId: payment_method_id,
+            transaction: {
+              amount: amount
+            }
+          }
+        }
+
+        send_request(query, variables)
+      end
+
+      def charge_paypal_account(paypal_account_id: "fake-paypal-one-time-nonce", amount:)
+        query = <<-GRAPHQL
+          mutation ChargePayPalAccount($input: ChargePayPalAccountInput!) {
+            chargePayPalAccount(input: $input) {
+              transaction {
+                id
+                status
+              }
+            }
+          }
+        GRAPHQL
+
+        variables = {
+          input: {
+            paymentMethodId: paypal_account_id,
+            transaction: {
+              amount: amount
+            }
+          }
+        }
+
+        send_request(query, variables)
+      end
+
+      def charge_venmo_account(venmo_account_id: "fake-venmo-account-nonce", amount:)
+        query = <<-GRAPHQL
+          mutation ChargeVenmoAccount($input: ChargeVenmoAccountInput!) {
+            chargeVenmoAccount(input: $input) {
+              transaction {
+                id
+                status
+              }
+            }
+          }
+        GRAPHQL
+
+        variables = {
+          input: {
+            paymentMethodId: venmo_account_id,
+            transaction: {
+              amount: amount
+            }
+          }
+        }
+
+        send_request(query, variables)
+
+      end
+
+      private
+
+      attr_reader :connection
+
+      def send_request(query, variables)
         connection.post do |req|
           req.body = {
             query: query,
@@ -38,10 +119,6 @@ module BraintreeSampleApp
           }.to_json
         end
       end
-
-      private
-
-      attr_reader :connection
     end
   end
 end
