@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'pry'
+
+require '/app/lib/braintree_sample_app'
+
+Pry.start(__FILE__)
